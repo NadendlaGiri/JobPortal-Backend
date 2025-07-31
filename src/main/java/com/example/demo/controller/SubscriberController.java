@@ -1,4 +1,3 @@
-// SubscriberController.java
 package com.example.demo.controller;
 
 import com.example.demo.model.Subscriber;
@@ -8,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/subscribers")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://jobportal-frontend.web.app")  // ✅ Allow only your deployed frontend
 public class SubscriberController {
 
     @Autowired
