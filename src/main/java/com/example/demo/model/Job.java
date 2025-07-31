@@ -2,13 +2,14 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.sql.Timestamp;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "job")
 public class Job {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 
@@ -16,9 +17,10 @@ public class Job {
     private String company;
     private String description;
     private String location;
-    private String url;  // renamed from link to url to match frontend
+    private String url;
 
-    @Column(name = "posted_date", updatable = false, insertable = false)
+    @CreationTimestamp
+    @Column(name = "posted_date", updatable = false)
     private Timestamp postedDate;
 
     public Job() {}
