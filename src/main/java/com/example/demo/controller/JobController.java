@@ -27,14 +27,25 @@ public class JobController {
     @Autowired
     private JobRepository jobRepository;
 
-    // Get paginated jobs sorted by postedDate DESC
+    // ✅ Updated: Return Map instead of JobPageResponse to avoid JSON deserialization issues
     @GetMapping
-    public Page<Job> getJobs(
+    public ResponseEntity<Map<String, Object>> getJobs(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "postedDate"));
-        return jobRepository.findAll(pageable);
+        Page<Job> jobPage = jobRepository.findAll(pageable);
+
+        List<Job> jobs = jobPage.getContent();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", jobs);
+        response.put("currentPage", jobPage.getNumber());
+        response.put("totalItems", jobPage.getTotalElements());
+        response.put("totalPages", jobPage.getTotalPages());
+        response.put("isLast", jobPage.isLast());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // Add a new job
