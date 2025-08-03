@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
@@ -24,10 +27,14 @@ public class JobController {
     @Autowired
     private JobRepository jobRepository;
 
-    // Get all jobs (sorted by latest postedDate)
+    // Get paginated jobs sorted by postedDate DESC
     @GetMapping
-    public List<Job> getAllJobs() {
-        return jobRepository.findAll(Sort.by(Sort.Direction.DESC, "postedDate"));
+    public Page<Job> getJobs(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "postedDate"));
+        return jobRepository.findAll(pageable);
     }
 
     // Add a new job
@@ -57,7 +64,7 @@ public class JobController {
 
         Map<String, String> body = new HashMap<>();
         body.put("title", title);
-        body.put("link", link); // If your mailer backend uses this
+        body.put("link", link);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
 
