@@ -47,6 +47,11 @@ public class JobController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+ // ✅ New unpaginated endpoint for admin
+    @GetMapping("/all")
+    public List<Job> getAllJobs() {
+        return jobRepository.findAll();
+    }
 
     // Add a new job
     @PostMapping
@@ -68,14 +73,14 @@ public class JobController {
 
     // Notify email subscribers using the Node.js backend
     private void notifySubscribers(String title, String link) {
-        String url = "https://mailer-backend-mgx9.onrender.com/send-alert";
+        String url = "https://mailer-backend-c7v4.onrender.com/send-alert";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         Map<String, String> body = new HashMap<>();
-        body.put("title", title);
-        body.put("link", link);
+        body.put("subject", "🆕 New Job Posted: " + title);
+        body.put("text", "Click here to view the job: " + link);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
 
@@ -83,9 +88,10 @@ public class JobController {
 
         try {
             restTemplate.postForEntity(url, entity, String.class);
-            System.out.println("Email alert sent successfully!");
+            System.out.println("✅ Email alert sent successfully!");
         } catch (Exception e) {
-            System.err.println("Failed to send email alert: " + e.getMessage());
+            System.err.println("⚠️ Failed to send email alert: " + e.getMessage());
         }
     }
+
 }
